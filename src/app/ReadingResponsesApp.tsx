@@ -16,13 +16,12 @@ import { Gradebook } from '../harness/api/Gradebook';
 import { AppCommandBar } from './AppCommandBar';
 import { AppFooter } from './AppFooter';
 
-import { useConst } from '@fluentui/react-hooks';
 import { ReadingResponse } from '../harness/api/ReadingResponse';
 
 /**
  * This React component renders the application page.
  */
-export function ExampleApp() {
+export function ReadingResponsesApp() {
     const [responses, setResponses] = React.useState<ReadingResponses | undefined>(undefined);
     const [selectedResponse, setSelectedResponse] = React.useState<ReadingResponse | undefined>(undefined);
 
