@@ -10,7 +10,8 @@ import {
     DetailsList,
     DetailsRow,
     IGroup,
-    SelectionZone
+    SelectionZone,
+    Text
 } from '@fluentui/react';
 import { Gradebook } from '../harness/api/Gradebook';
 import { AppCommandBar } from './AppCommandBar';
@@ -244,7 +245,7 @@ export function ReadingResponsesApp() {
                             compact
                         />
                         </SelectionZone>
-                    : <span>Please load a reading response file...</span>
+                    : <Text variant='small'>Please load a reading response file...</Text>
                     }
                 </div>
 

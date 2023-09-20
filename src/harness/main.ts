@@ -1,4 +1,4 @@
-import { app, BrowserWindow, dialog, ipcMain } from 'electron';
+import { app, BrowserWindow, dialog, ipcMain, shell } from 'electron';
 const path = require('path');
 import { ReadingResponses } from "./api/ReadingResponses";
 import { ReadingResponsesUtilities } from "./utilities/ReadingResponsesUtilities";
