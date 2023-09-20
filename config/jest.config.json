@@ -1,16 +1,16 @@
 {
     "extends": "@rushstack/heft-jest-plugin/includes/jest-shared.config.json",
   
-    "roots": ["<rootDir>/lib-commonjs"],
+    "roots": ["<rootDir>/lib"],
   
-    "testMatch": ["<rootDir>/lib-commonjs/**/*.test.js"],
+    "testMatch": ["<rootDir>/lib/**/*.test.js"],
     "collectCoverageFrom": [
-      "lib-commonjs/**/*.js",
-      "!lib-commonjs/**/*.d.ts",
-      "!lib-commonjs/**/*.test.js",
-      "!lib-commonjs/**/test/**",
-      "!lib-commonjs/**/__tests__/**",
-      "!lib-commonjs/**/__fixtures__/**",
-      "!lib-commonjs/**/__mocks__/**"
+      "lib/**/*.js",
+      "!lib/**/*.d.ts",
+      "!lib/**/*.test.js",
+      "!lib/**/test/**",
+      "!lib/**/__tests__/**",
+      "!lib/**/__fixtures__/**",
+      "!lib/**/__mocks__/**"
     ]
   }

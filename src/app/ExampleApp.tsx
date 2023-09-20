@@ -1,14 +1,11 @@
 import * as React from 'react';
-
-declare function getVersions(): {
-    node: string;
-};
+import { ReadingResponses } from '../harness/api/ReadingResponses';
+import { Electron } from './Electron';
 
 /**
  * This React component renders the application page.
  */
-export class ExampleApp extends React.Component {
-  public render(): React.ReactNode {
+export function ExampleApp() {
     const appStyle: React.CSSProperties = {
       backgroundColor: '#ffffff',
       padding: '20px',
@@ -16,14 +13,33 @@ export class ExampleApp extends React.Component {
       width: '400px'
     };
 
+    const [responses, setResponses] = React.useState<ReadingResponses | undefined>(undefined);
+
+    const usernames = React.useMemo(() => {
+        if (responses) {
+            return [...responses.responses.keys()];
+        }
+        return [];
+    }, [responses])
+
     return (
       <div style={{ padding: '20px' }}>
         <div style={appStyle}>
           <h2>Hello, world!</h2>
+          <button
+            onClick={() => Electron.openFile().then((data) => {
+                setResponses(data);
+            })}
+          >
+            Load
+          </button>
           Here is an example control!
-          {getVersions().node}
+          {
+            usernames.map((username) => {
+                return <span>{username}</span>;
+            })
+          }
         </div>
       </div>
     );
-  }
 }

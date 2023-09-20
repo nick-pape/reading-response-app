@@ -1,11 +1,12 @@
-export class Gradebook {
-    private _grades: Map<string, number>;
+export interface IGradebook {
+    grades: Map<string, number>;
+}
 
-    public constructor() {
-        this._grades = new Map<string, number>();
-    }
+export class Gradebook implements IGradebook {
+    public readonly grades: Map<string, number>;
 
-    public get grades(): ReadonlyMap<string, number> {
-        return this._grades;
+    public constructor();
+    public constructor(data?: IGradebook) {
+        this.grades = data?.grades || new Map<string, number>();
     }
 }

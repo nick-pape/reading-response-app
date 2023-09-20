@@ -1,12 +1,14 @@
-export class ReadingResponse {
-    private _username: string;
-    private _text: string;
+export interface IReadingResponse {
+    username: string;
+    text: string;
+}
 
-    public constructor(
-        username: string,
-        text: string
-    ) {
-        this._username = username;
-        this._text = text;
+export class ReadingResponse implements IReadingResponse {
+    public readonly username: string;
+    public readonly text: string;
+
+    public constructor(data: IReadingResponse) {
+        this.username = data.username;
+        this.text = data.text;
     }
 }

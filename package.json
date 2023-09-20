@@ -2,7 +2,7 @@
   "name": "grading-utility",
   "version": "1.0.0",
   "description": "Grading utility for RL reading responses",
-  "main": "lib/harness/main.js",
+  "main": "lib-commonjs/harness/main.js",
   "scripts": {
     "build": "heft build --clean",
     "start": "electron-forge start",

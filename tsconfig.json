@@ -18,6 +18,7 @@
       "noEmitOnError": false,
       "allowUnreachableCode": false,
       "importHelpers": true,
+      "downlevelIteration": true,
   
       "types": ["heft-jest", "webpack-env", "node"],
   

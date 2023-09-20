@@ -1,5 +1,7 @@
+const { app, BrowserWindow, dialog, ipcMain } = require('electron');
 const path = require('path');
-const { app, BrowserWindow } = require('electron');
+import { ReadingResponses } from "./api/ReadingResponses";
+import { ReadingResponsesUtilities } from "./utilities/ReadingResponsesUtilities";
 
 const createWindow = () => {
     const win = new BrowserWindow({
@@ -21,7 +23,16 @@ app.on('window-all-closed', () => {
 });
 
 
+async function handleFileOpen(): Promise<ReadingResponses | undefined> {
+    const { canceled, filePaths } = await dialog.showOpenDialog({})
+    if (!canceled) {
+      return ReadingResponsesUtilities.fromDumpFile(filePaths[0]);
+    }
+}
+
 app.whenReady().then(() => {
+    ipcMain.handle('dialog:openFile', handleFileOpen)
+
     createWindow();
     
     // MacOS doesn't close windows, so reopen if there isn't an existing one
