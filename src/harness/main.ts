@@ -12,7 +12,7 @@ async function createWindow() {
         }
     });
 
-    // win.removeMenu();
+    win.removeMenu();
     win.setTitle("RL Reading Response Grader")
     await win.loadFile('dist/index.html')
 }
