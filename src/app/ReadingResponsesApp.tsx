@@ -250,7 +250,7 @@ export function ReadingResponsesApp() {
                 </div>
 
                 {/* Second Column */}
-                <div style={{ flex: 1, overflowY: 'auto', backgroundColor: 'lightgreen' }}>
+                <div style={{ flex: 1, overflowY: 'auto', backgroundColor: 'lightgrey' }}>
                     <ReadingResponseViewer
                         response={selectedResponse}
                     />

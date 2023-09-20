@@ -4,7 +4,7 @@ import {default as markdownIt } from 'markdown-it';
 import { Text } from '@fluentui/react';
 
 const markdownItKatex = require('markdown-it-katex');
-import 'katex/dist/katex.min.css'; // Import KaTeX CSS for styling
+import 'markdown-it-katex/node_modules/katex/dist/katex.min.css'; // Import KaTeX CSS for styling
 
 const MarkDown = markdownIt({
     breaks: true,
@@ -40,6 +40,9 @@ export function ReadingResponseViewer(props: IReadingResponseViewerProps) {
         >
             {props.response.username}
         </Text>
-        <p dangerouslySetInnerHTML={{ __html: markdown }} />
+        <span
+            
+            dangerouslySetInnerHTML={{ __html: markdown }}
+        />
     </>;
 }
