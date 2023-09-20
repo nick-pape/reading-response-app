@@ -49,43 +49,93 @@ const gradeOptions: Array<IGradeOptions> = [
 export function ReadingResponsesApp() {
     const [responses, setResponses] = React.useState<ReadingResponses | undefined>(undefined);
     const [selectedResponse, setSelectedResponse] = React.useState<ReadingResponse | undefined>(undefined);
+    const [gradebookData, setGradebookData] = React.useState<Gradebook>(new Gradebook());
 
     const usernames = React.useMemo(() => {
         if (responses) {
             
-            return [...responses.responses.keys()].map((username) => {
-                return { key: username, username };
+            const list = [...responses.responses.keys()].map((username) => {
+                return {
+                    key: username,
+                    username,
+                    grade: gradebookData.grades.get(username)
+                };
             });
+
+            // Sort the list by grade
+            list.sort((a, b) => {
+                // Check for undefined grades
+                if (a.grade === undefined && b.grade === undefined) {
+                    return 0;
+                } else if (a.grade === undefined) {
+                    return -1;
+                } else if (b.grade === undefined) {
+                    return 1;
+                } else {
+                    // Compare numeric grades
+                    return a.grade - b.grade;
+                }
+            });
+
+            return list;
         }
         return undefined;
-    }, [responses]);
+    }, [responses, gradebookData]);
 
-    const [gradebookData, setGradebookData] = React.useState<Gradebook>(new Gradebook());
+    const countUngraded = React.useMemo(() => {
+        if (!usernames) {
+            return 0;
+        }
+
+        return usernames.reduce((count, item) => {
+            if (item.grade === undefined) {
+                return count + 1;
+            } else {
+                return count;
+            }
+        }, 0);
+    }, [usernames]);
 
     // Create two groups: 'In Gradebook' and 'Not In Gradebook'
-    const groups = [
-        /*{
-            key: 'Graded',
-            name: 'Graded',
-            startIndex: gradebookData.grades.size,
-            count: (usernames?.length || 0) - gradebookData.grades.size,
-        },*/
-        {
-            key: 'NotGraded',
-            name: `Not Graded`,
-            startIndex: 0,
-            count: usernames?.length || 0,
-        },
-    ];
+    const groups = React.useMemo(() => {
+        if (!usernames) {
+            return [];
+        }
+
+        const groups = [];
+
+        if (countUngraded !== 0) {
+            groups.push({
+                key: 'NotGraded',
+                name: 'Not Graded',
+                startIndex: 0,
+                count: countUngraded
+            });
+        }
+
+        if (countUngraded !== usernames.length) {
+            groups.push({
+                key: 'Graded',
+                name: `Graded`,
+                startIndex: countUngraded,
+                count: usernames.length - countUngraded
+            });
+        }
+
+        return groups;
+    }, [usernames, countUngraded]);
 
     // Create a selection object to keep track of selected items
     
     const selection = React.useMemo(() => {
         const selection = new Selection({
+            canSelectItem: (item, index) => {
+                return item.key !== 'NotGraded' && item.key !== 'Graded';
+            },
+
             onSelectionChanged: () => {
                 // Handle selection changes here, if needed
                 const selectedItems = selection.getSelection();
-                console.log(selectedItems, "ewgergre");
 
                 if (selectedItems.length === 1) {
                     setSelectedResponse(responses?.responses.get(selectedItems[0].key as string));
@@ -94,10 +144,12 @@ export function ReadingResponsesApp() {
                 }
 
             },
+            selectionMode: SelectionMode.single
         });
 
         if (usernames) {
             selection.setItems(usernames);
+            selection.setIndexSelected(0, true, true);
         }
 
         return selection;
@@ -112,12 +164,41 @@ export function ReadingResponsesApp() {
             {/* Top Row */}
             <div style={{ height: '50px'  }}>
                 <AppCommandBar
+                    hasLoadedFile={!!responses}
                     onLoadFile={() => {
                         Electron.openFile().then((data) => {
                             setResponses(data);
                         }).catch(() => { })
                     }}
                     onReview={() => {}}
+                    onNext={() => {
+                        if (usernames) {
+                            const indices = selection.getSelectedIndices();
+                            const currentIndex = indices[0];
+                            let nextIndex = currentIndex + 1;
+
+                            if (nextIndex === usernames.length) {
+                                nextIndex = 0; 
+                            }
+
+                            selection.setIndexSelected(currentIndex, false, false);
+                            selection.setIndexSelected(nextIndex, true, true);
+                        }
+                    }}
+                    onBack={() => {
+                        if (usernames) {
+                            const indices = selection.getSelectedIndices();
+                            const currentIndex = indices[0];
+                            let nextIndex = currentIndex - 1;
+
+                            if (nextIndex === -1) {
+                                nextIndex = usernames.length - 1; 
+                            }
+
+                            selection.setIndexSelected(currentIndex, false, false);
+                            selection.setIndexSelected(nextIndex, true, true);
+                        }
+                    }}
                 />
             </div>
 

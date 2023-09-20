@@ -4,6 +4,9 @@ import { CommandBar, ICommandBarItemProps } from "@fluentui/react";
 export interface ICommandBarProps {
     onLoadFile: () => void;
     onReview: () => void;
+    onNext: () => void;
+    onBack: () => void;
+    hasLoadedFile: boolean;
 }
 
 export function AppCommandBar(props: ICommandBarProps) {
@@ -13,15 +16,30 @@ export function AppCommandBar(props: ICommandBarProps) {
           text: 'Load',
           iconProps: { iconName: 'OpenFile' },
           onClick: props.onLoadFile
+        },
+        {
+            key: 'review',
+            text: 'Review',
+            iconProps: { iconName: 'DecisionSolid' },
+            onClick: props.onReview,
+            disabled: !props.hasLoadedFile
         }
     ];
 
     const _farItems: ICommandBarItemProps[] = [
         {
-            key: 'tile',
-            text: 'Review',
-            iconProps: { iconName: 'DecisionSolid' },
-            onClick: props.onReview
+            key: 'back',
+            text: 'Back',
+            iconProps: { iconName: 'ChevronLeftMed' },
+            onClick: props.onBack,
+            disabled: !props.hasLoadedFile
+        },
+        {
+            key: 'next',
+            text: 'Next',
+            iconProps: { iconName: 'ChevronRightMed' },
+            onClick: props.onNext,
+            disabled: !props.hasLoadedFile
         }
     ];
 
