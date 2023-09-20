@@ -1,5 +1,3 @@
-There was an error parsing the JSON document. The document may not be well-formed.
-Unexpected token '/', "/** * Def"... is not valid JSON
 /**
  * Defines configuration used by core Heft.
  */

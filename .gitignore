@@ -1,1 +1,5 @@
 node_modules
+lib
+lib-commonjs
+dist
+temp

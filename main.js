@@ -10,7 +10,7 @@ const createWindow = () => {
         }
     });
 
-    win.loadFile('index.html')
+    win.loadFile('dist/index.html')
 }
 
 // Close the app when all windows closed
