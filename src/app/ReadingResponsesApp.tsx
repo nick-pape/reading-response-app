@@ -17,6 +17,7 @@ import { AppCommandBar } from './AppCommandBar';
 import { AppFooter, IGradeOptions } from './AppFooter';
 
 import { ReadingResponse } from '../harness/api/ReadingResponse';
+import { ReadingResponseViewer } from './ReadingResponseViewer';
 
 const gradeOptions: Array<IGradeOptions> = [
     {
@@ -168,16 +169,9 @@ export function ReadingResponsesApp() {
 
                 {/* Second Column */}
                 <div style={{ flex: 1, overflowY: 'auto', backgroundColor: 'lightgreen' }}>
-                    { !!selectedResponse ?
-                    <>
-                        <h2>{selectedResponse.username}</h2>
-                        <p>{selectedResponse.text}</p>
-                    </>
-                    :<>
-                        <h2>Main Container</h2>
-                        <p>Main content goes here.</p>
-                    </>
-                    }
+                    <ReadingResponseViewer
+                        response={selectedResponse}
+                    />
                 </div>
             </Stack>
 

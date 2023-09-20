@@ -24,6 +24,7 @@ export function AppFooter(props: IAppFooterProps) {
     return <Stack
         horizontal
         grow
+        horizontalAlign='center'
         verticalAlign='stretch'
         tokens={themedMediumStackTokens}
     >
