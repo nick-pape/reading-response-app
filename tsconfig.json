@@ -19,6 +19,7 @@
       "allowUnreachableCode": false,
       "importHelpers": true,
       "downlevelIteration": true,
+      "skipLibCheck": true,
   
       "types": ["heft-jest", "webpack-env", "node"],
   

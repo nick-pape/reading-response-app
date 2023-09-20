@@ -1,9 +1,9 @@
-const { app, BrowserWindow, dialog, ipcMain } = require('electron');
+import { app, BrowserWindow, dialog, ipcMain } from 'electron';
 const path = require('path');
 import { ReadingResponses } from "./api/ReadingResponses";
 import { ReadingResponsesUtilities } from "./utilities/ReadingResponsesUtilities";
 
-const createWindow = () => {
+async function createWindow() {
     const win = new BrowserWindow({
         width: 800,
         height: 600,
@@ -12,7 +12,9 @@ const createWindow = () => {
         }
     });
 
-    win.loadFile('dist/index.html')
+    // win.removeMenu();
+    win.setTitle("RL Reading Response Grader")
+    await win.loadFile('dist/index.html')
 }
 
 // Close the app when all windows closed
@@ -30,15 +32,23 @@ async function handleFileOpen(): Promise<ReadingResponses | undefined> {
     }
 }
 
-app.whenReady().then(() => {
+async function initialize() {
+    await app.whenReady();
+
     ipcMain.handle('dialog:openFile', handleFileOpen)
 
-    createWindow();
+    await createWindow();
     
     // MacOS doesn't close windows, so reopen if there isn't an existing one
-    app.on('activate', () => {
+    app.on('activate', async () => {
         if (BrowserWindow.getAllWindows().length === 0) {
-            createWindow();
+            await createWindow();
         }
     });
-});
+}
+
+initialize().then(() => {
+    console.log("Started up the app.")
+}).catch((err) => {
+    console.log(`Issue starting the app: ${err}`)
+})
