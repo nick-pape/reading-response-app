@@ -19,12 +19,12 @@
       "allowUnreachableCode": false,
       "importHelpers": true,
   
-      "types": ["heft-jest", "webpack-env"],
+      "types": ["heft-jest", "webpack-env", "node"],
   
       "module": "esnext",
       "moduleResolution": "node",
       "target": "es5",
-      "lib": ["es5", "scripthost", "es2015.collection", "es2015.promise", "es2015.iterable", "dom"]
+      "lib": ["es5", "scripthost", "es2015.collection", "es2015.promise", "es2015.iterable", "dom", "es2017"]
     },
     "include": ["src/**/*.ts", "src/**/*.tsx"],
     "exclude": ["node_modules", "lib"]
