@@ -1,5 +1,9 @@
 import * as React from 'react';
 
+declare function getVersions(): {
+    node: string;
+};
+
 /**
  * This React component renders the application page.
  */
@@ -17,6 +21,7 @@ export class ExampleApp extends React.Component {
         <div style={appStyle}>
           <h2>Hello, world!</h2>
           Here is an example control!
+          {getVersions().node}
         </div>
       </div>
     );
