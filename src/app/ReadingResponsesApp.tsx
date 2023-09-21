@@ -165,38 +165,39 @@ export function ReadingResponsesApp(): React.ReactElement {
 
     React.useEffect(() => {
         selection.setItems(usernames || [], false);
-    }, [usernames, selection])
+    }, [usernames, selection]);
+
+    const onRenderCell = React.useCallback((
+        nestingDepth?: number,
+        item?: string,
+        itemIndex?: number,
+        group?: IGroup,
+    ) => (
+        <DetailsRow
+            columns={[
+                {
+                    key: 'username',
+                    name: 'User',
+                    fieldName: 'username',
+                    minWidth: 200,
+                }
+            ]}
+            groupNestingDepth={nestingDepth}
+            item={item}
+            itemIndex={itemIndex!}
+            selection={selection}
+            selectionMode={SelectionMode.single}
+            compact={true}
+            group={group}
+        />
+    ), [selection]);
 
     const groupList = React.useMemo(() => {
         return usernames ?
             <SelectionZone selection={selection} selectionMode={SelectionMode.single}>
                 <GroupedList
                     items={usernames}
-                    onRenderCell={(
-                        nestingDepth?: number,
-                        item?: string,
-                        itemIndex?: number,
-                        group?: IGroup,
-                    )=> (
-                        <DetailsRow
-                            columns={[
-                                {
-                                    key: 'username',
-                                    name: 'User',
-                                    fieldName: 'username',
-                                    minWidth: 200,
-                                }
-                            ]}
-                            groupNestingDepth={nestingDepth}
-                            item={item}
-                            itemIndex={itemIndex!}
-                            selection={selection}
-                            selectionMode={SelectionMode.single}
-                            compact={true}
-                            group={group}
-                        />
-                    )}
-                    onShouldVirtualize={ () => false }
+                    onRenderCell={onRenderCell}
                     groups={groups}
                     selectionMode={SelectionMode.single}
                     selection={selection} // Pass the selection object
@@ -206,8 +207,14 @@ export function ReadingResponsesApp(): React.ReactElement {
             : <Text variant='small'>Please load a reading response file...</Text>
     }, [usernames, selection, groups])
 
-    return (
+    const onLoadFile = React.useCallback(() => {
+        Electron.openFile().then((data) => {
+            setResponses(data.responses);
+            setGradebookData(data.grades)
+        }).catch(() => { })
+    }, [setResponses, setGradebookData]);
 
+    return (
         <Stack
             verticalAlign="stretch"
             styles={{ root: { height: '100vh' } }}
@@ -217,12 +224,7 @@ export function ReadingResponsesApp(): React.ReactElement {
                 <AppCommandBar
                     hasLoadedFile={!!responses}
                     isReviewEnabled={counts[NOT_GRADED_KEY] === 0}
-                    onLoadFile={() => {
-                        Electron.openFile().then((data) => {
-                            setResponses(data.responses);
-                            setGradebookData(data.grades)
-                        }).catch(() => { })
-                    }}
+                    onLoadFile={onLoadFile}
                     onReview={() => {}}
                     onNext={() => {
                         if (usernames) {
