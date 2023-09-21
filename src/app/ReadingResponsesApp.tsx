@@ -40,7 +40,21 @@ const gradeOptions: Array<IGradeOptions> = [
         grade: 1.0,
         description: "The response covered the entire chapter with sufficient detail."
     }
-]
+];
+
+const NOT_GRADED_KEY = 'Not Graded';
+const NO_CREDIT_KEY = 'No Credit';
+const PARTIAL_CREDIT_KEY = 'Partial Credit';
+const FULL_CREDIT_KEY = 'Full Credit';
+
+interface IResponseCounts {
+    [NOT_GRADED_KEY]: number;
+    [NO_CREDIT_KEY]: number;
+    [PARTIAL_CREDIT_KEY]: number;
+    [FULL_CREDIT_KEY]: number;
+}
+
+const KEYS = new Set([NOT_GRADED_KEY, NO_CREDIT_KEY, PARTIAL_CREDIT_KEY, FULL_CREDIT_KEY]);
 
 
 /**
@@ -65,13 +79,16 @@ export function ReadingResponsesApp() {
             list.sort((a, b) => {
                 // Check for undefined grades
                 if (a.grade === undefined && b.grade === undefined) {
-                    return 0;
+                    return a.username > b.username ? 1 : -1;
                 } else if (a.grade === undefined) {
                     return -1;
                 } else if (b.grade === undefined) {
                     return 1;
                 } else {
                     // Compare numeric grades
+                    if (a.grade === b.grade) {
+                        return a.username > b.username ? 1 : -1;
+                    }
                     return a.grade - b.grade;
                 }
             });
@@ -81,54 +98,56 @@ export function ReadingResponsesApp() {
         return undefined;
     }, [responses, gradebookData]);
 
-    const countUngraded = React.useMemo(() => {
+    const counts: IResponseCounts = React.useMemo(() => {
+        const count: IResponseCounts = {
+            [NOT_GRADED_KEY]: 0,
+            [NO_CREDIT_KEY]: 0,
+            [PARTIAL_CREDIT_KEY]: 0,
+            [FULL_CREDIT_KEY]: 0
+        };
+
         if (!usernames) {
-            return 0;
+            return count;
         }
 
-        return usernames.reduce((count, item) => {
+        usernames.map(item => {
             if (item.grade === undefined) {
-                return count + 1;
+                count[NOT_GRADED_KEY] += 1;
+            } else if (item.grade === 1.0) {
+                count[FULL_CREDIT_KEY] += 1;
+            } else if (item.grade === 0.0) {
+                count[NO_CREDIT_KEY] += 1;
             } else {
-                return count;
+                count[PARTIAL_CREDIT_KEY] += 1;
             }
-        }, 0);
+        });
+
+        return count;
     }, [usernames]);
 
     // Create two groups: 'In Gradebook' and 'Not In Gradebook'
     const groups = React.useMemo(() => {
-        if (!usernames) {
-            return [];
-        }
+        let indexSoFar: number = 0;
 
-        const groups = [];
-
-        if (countUngraded !== 0) {
-            groups.push({
-                key: 'NotGraded',
-                name: 'Not Graded',
-                startIndex: 0,
-                count: countUngraded
-            });
-        }
-
-        if (countUngraded !== usernames.length) {
-            groups.push({
-                key: 'Graded',
-                name: `Graded`,
-                startIndex: countUngraded,
-                count: usernames.length - countUngraded
-            });
-        }
-
-        return groups;
-    }, [usernames, countUngraded]);
+        return [NOT_GRADED_KEY, NO_CREDIT_KEY, PARTIAL_CREDIT_KEY, FULL_CREDIT_KEY].reduce((prev: IGroup[], key: string) => {
+            const count = counts[key as keyof IResponseCounts];
+            if (count !== 0) {
+                prev.push({
+                    key,
+                    name: key,
+                    startIndex: indexSoFar,
+                    count
+                });
+                indexSoFar += count;
+            }
+            return prev;
+        }, [] as IGroup[]);
+    }, [usernames, counts]);
 
     // Create a selection object to keep track of selected items
     const selection = React.useMemo(() =>
         new Selection({
             onSelectionChanged: () => {
-                //console.log('handle selection change',selection.getSelection())
                 const selected = selection.getSelection();
 
                 if (selected.length === 0) {
@@ -139,7 +158,7 @@ export function ReadingResponsesApp() {
                 }
             },
             canSelectItem: (item, index) => {
-                return (item.key !== 'NotGraded' && item.key !== 'Graded');
+                return !KEYS.has(item.key as string);
             },
             selectionMode: SelectionMode.multiple,
          }
@@ -199,7 +218,7 @@ export function ReadingResponsesApp() {
             <div style={{ height: '50px'  }}>
                 <AppCommandBar
                     hasLoadedFile={!!responses}
-                    isReviewEnabled={countUngraded === 0}
+                    isReviewEnabled={counts[NOT_GRADED_KEY] === 0}
                     onLoadFile={() => {
                         Electron.openFile().then((data) => {
                             setResponses(data.responses);
@@ -275,7 +294,7 @@ export function ReadingResponsesApp() {
 
                             // move to whatever item will be in this spot
                             debugger;
-                            if (!alreadyHadGrade) {
+                            if (!alreadyHadGrade && counts[NOT_GRADED_KEY] !== 1) {
                                 const selectedItems = selection.getSelectedIndices();
                                 const currentIndex = selectedItems[0];
                                 const items = selection.getItems();
