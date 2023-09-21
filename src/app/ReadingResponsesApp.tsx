@@ -214,6 +214,65 @@ export function ReadingResponsesApp(): React.ReactElement {
         }).catch(() => { })
     }, [setResponses, setGradebookData]);
 
+    const onNextClicked = React.useCallback(() => {
+        if (usernames) {
+            const indices = selection.getSelectedIndices();
+            const currentIndex = indices[0];
+            let nextIndex = currentIndex + 1;
+
+            if (nextIndex === usernames.length) {
+                nextIndex = 0; 
+            }
+
+            selection.setIndexSelected(currentIndex, false, false);
+            selection.setIndexSelected(nextIndex, true, true);
+        }
+    }, [usernames, selection]);
+
+    const onBackClicked = React.useCallback(() => {
+        if (usernames) {
+            const indices = selection.getSelectedIndices();
+            const currentIndex = indices[0];
+            let nextIndex = currentIndex - 1;
+
+            if (nextIndex === -1) {
+                nextIndex = usernames.length - 1; 
+            }
+
+            selection.setIndexSelected(currentIndex, false, false);
+            selection.setIndexSelected(nextIndex, true, true);
+        }
+    }, [usernames, selection]);
+
+    const onGraded = React.useCallback(async (grade: number) => {
+        if (selectedResponse && gradebookData) {
+            console.log(selectedResponse.username, grade);
+
+            const alreadyHadGrade = gradebookData.grades.get(selectedResponse.username) !== undefined;
+
+            gradebookData.grades.set(selectedResponse.username, grade);
+            const newGradebook = new Gradebook({ grades: gradebookData.grades });
+            setGradebookData(newGradebook);
+
+            // move to whatever item will be in this spot
+            if (!alreadyHadGrade && counts[NOT_GRADED_KEY] !== 1) {
+                const selectedItems = selection.getSelectedIndices();
+                const currentIndex = selectedItems[0];
+                const items = selection.getItems();
+                const nextIndex = Math.max(0, Math.min(items.length - 1, currentIndex + 1));
+                const newKey = items[nextIndex].key as string;
+                selection.setKeySelected(selectedResponse.username, false, false);
+                selection.setKeySelected(newKey, true, false);
+            }
+
+            await Electron.saveGrades(newGradebook);
+        }
+    }, [selectedResponse, gradebookData, setGradebookData, selection]);
+
+    const noop = React.useCallback(() => {
+
+    }, []);
+
     return (
         <Stack
             verticalAlign="stretch"
@@ -225,35 +284,9 @@ export function ReadingResponsesApp(): React.ReactElement {
                     hasLoadedFile={!!responses}
                     isReviewEnabled={counts[NOT_GRADED_KEY] === 0}
                     onLoadFile={onLoadFile}
-                    onReview={() => {}}
-                    onNext={() => {
-                        if (usernames) {
-                            const indices = selection.getSelectedIndices();
-                            const currentIndex = indices[0];
-                            let nextIndex = currentIndex + 1;
-
-                            if (nextIndex === usernames.length) {
-                                nextIndex = 0; 
-                            }
-
-                            selection.setIndexSelected(currentIndex, false, false);
-                            selection.setIndexSelected(nextIndex, true, true);
-                        }
-                    }}
-                    onBack={() => {
-                        if (usernames) {
-                            const indices = selection.getSelectedIndices();
-                            const currentIndex = indices[0];
-                            let nextIndex = currentIndex - 1;
-
-                            if (nextIndex === -1) {
-                                nextIndex = usernames.length - 1; 
-                            }
-
-                            selection.setIndexSelected(currentIndex, false, false);
-                            selection.setIndexSelected(nextIndex, true, true);
-                        }
-                    }}
+                    onReview={noop}
+                    onNext={onNextClicked}
+                    onBack={onBackClicked}
                 />
             </div>
 
@@ -282,30 +315,7 @@ export function ReadingResponsesApp(): React.ReactElement {
                     gradeOptions={gradeOptions}
                     disabled={!selectedResponse}
                     grade={selectedResponse && gradebookData ? gradebookData.grades.get(selectedResponse.username) : undefined}
-                    onGraded={async (grade: number) => {
-                        if (selectedResponse && gradebookData) {
-                            console.log(selectedResponse.username, grade);
-
-                            const alreadyHadGrade = gradebookData.grades.get(selectedResponse.username) !== undefined;
-
-                            gradebookData.grades.set(selectedResponse.username, grade);
-                            const newGradebook = new Gradebook({ grades: gradebookData.grades });
-                            setGradebookData(newGradebook);
-
-                            // move to whatever item will be in this spot
-                            if (!alreadyHadGrade && counts[NOT_GRADED_KEY] !== 1) {
-                                const selectedItems = selection.getSelectedIndices();
-                                const currentIndex = selectedItems[0];
-                                const items = selection.getItems();
-                                const nextIndex = Math.max(0, Math.min(items.length - 1, currentIndex + 1));
-                                const newKey = items[nextIndex].key as string;
-                                selection.setKeySelected(selectedResponse.username, false, false);
-                                selection.setKeySelected(newKey, true, false);
-                            }
-
-                            await Electron.saveGrades(newGradebook);
-                        }
-                    }}
+                    onGraded={onGraded}
                 />
             </div>
         </Stack>
