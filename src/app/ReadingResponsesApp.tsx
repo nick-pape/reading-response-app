@@ -42,10 +42,10 @@ const gradeOptions: Array<IGradeOptions> = [
     }
 ];
 
-const NOT_GRADED_KEY = 'Not Graded';
-const NO_CREDIT_KEY = 'No Credit';
-const PARTIAL_CREDIT_KEY = 'Partial Credit';
-const FULL_CREDIT_KEY = 'Full Credit';
+const NOT_GRADED_KEY: 'Not Graded' = 'Not Graded';
+const NO_CREDIT_KEY: 'No Credit' = 'No Credit';
+const PARTIAL_CREDIT_KEY: 'Partial Credit' = 'Partial Credit';
+const FULL_CREDIT_KEY: 'Full Credit' = 'Full Credit';
 
 interface IResponseCounts {
     [NOT_GRADED_KEY]: number;
@@ -54,13 +54,12 @@ interface IResponseCounts {
     [FULL_CREDIT_KEY]: number;
 }
 
-const KEYS = new Set([NOT_GRADED_KEY, NO_CREDIT_KEY, PARTIAL_CREDIT_KEY, FULL_CREDIT_KEY]);
-
+const GROUP_KEYS: Set<string> = new Set<string>([NOT_GRADED_KEY, NO_CREDIT_KEY, PARTIAL_CREDIT_KEY, FULL_CREDIT_KEY]);
 
 /**
  * This React component renders the application page.
  */
-export function ReadingResponsesApp() {
+export function ReadingResponsesApp(): React.ReactElement {
     const [responses, setResponses] = React.useState<ReadingResponses | undefined>(undefined);
     const [selectedResponse, setSelectedResponse] = React.useState<ReadingResponse | undefined>(undefined);
     const [gradebookData, setGradebookData] = React.useState<Gradebook | undefined>(undefined);
@@ -158,14 +157,13 @@ export function ReadingResponsesApp() {
                 }
             },
             canSelectItem: (item, index) => {
-                return !KEYS.has(item.key as string);
+                return !GROUP_KEYS.has(item.key as string);
             },
             selectionMode: SelectionMode.multiple,
          }
     ), [setSelectedResponse, responses]);
 
     React.useEffect(() => {
-        debugger;
         selection.setItems(usernames || [], false);
     }, [usernames, selection])
 
@@ -293,7 +291,6 @@ export function ReadingResponsesApp() {
                             setGradebookData(newGradebook);
 
                             // move to whatever item will be in this spot
-                            debugger;
                             if (!alreadyHadGrade && counts[NOT_GRADED_KEY] !== 1) {
                                 const selectedItems = selection.getSelectedIndices();
                                 const currentIndex = selectedItems[0];

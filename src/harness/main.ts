@@ -1,12 +1,12 @@
-import { app, BrowserWindow, dialog, Event, ipcMain, shell } from 'electron';
-const path = require('path');
+import { app, BrowserWindow, dialog, Event, ipcMain } from 'electron';
 import { ReadingResponses } from "./api/ReadingResponses";
 import { ReadingResponsesUtilities } from "./utilities/ReadingResponsesUtilities";
 import { Gradebook, IGradebook } from './api/Gradebook';
 import { GradebookUtilities } from './utilities/GradebookUtilities';
 import * as fs from 'fs';
+import * as path from 'path';
 
-async function createWindow() {
+async function createWindow(): Promise<void> {
     const win = new BrowserWindow({
         width: 1600,
         height: 1200,
@@ -30,7 +30,7 @@ app.on('window-all-closed', () => {
 let responsesPath: string | undefined = undefined;
 let gradebookPath: string | undefined = undefined;
 
-async function handleSaveGradebook(_: Event, gradebook: IGradebook): Promise<void> {
+async function handleSaveGradebook(event: Event, gradebook: IGradebook): Promise<void> {
     if (gradebookPath) {
         console.log(gradebook);
 
@@ -60,7 +60,7 @@ async function handleFileOpen(): Promise<{
     }
 }
 
-async function initialize() {
+async function initialize(): Promise<void> {
     await app.whenReady();
 
     ipcMain.handle('dialog:openFile', handleFileOpen)

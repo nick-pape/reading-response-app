@@ -10,7 +10,7 @@ export interface ICommandBarProps {
     isReviewEnabled: boolean;
 }
 
-export function AppCommandBar(props: ICommandBarProps) {
+export function AppCommandBar(props: ICommandBarProps): React.ReactElement {
     const _items: ICommandBarItemProps[] = [
         {
             key: 'loadFile',

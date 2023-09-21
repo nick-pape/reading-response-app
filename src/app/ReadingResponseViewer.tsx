@@ -1,12 +1,11 @@
 import * as React from 'react';
 import { ReadingResponse } from '../harness/api/ReadingResponse';
-import {default as markdownIt } from 'markdown-it';
+import { default as markdownIt } from 'markdown-it';
 import { Text } from '@fluentui/react';
-
-const markdownItKatex = require('markdown-it-katex');
 import 'markdown-it-katex/node_modules/katex/dist/katex.min.css'; // Import KaTeX CSS for styling
+const markdownItKatex: markdownIt.PluginSimple = require('markdown-it-katex');
 
-const MarkDown = markdownIt({
+const MarkDown: markdownIt = markdownIt({
     breaks: true,
     linkify: false, // turn this on after getting an ipc event setup
     typographer: true
@@ -16,7 +15,7 @@ export interface IReadingResponseViewerProps {
     response: ReadingResponse | undefined;
 }
 
-export function ReadingResponseViewer(props: IReadingResponseViewerProps) {
+export function ReadingResponseViewer(props: IReadingResponseViewerProps): React.ReactElement {
     const markdown = React.useMemo(() => {
         if (!props.response) {
             return '';

@@ -18,9 +18,7 @@ const themedMediumStackTokens: IStackTokens = {
     padding: 's1',
 };
 
-export function AppFooter(props: IAppFooterProps) {
-    console.log("Footer grade:", props.grade);
-
+export function AppFooter(props: IAppFooterProps): React.ReactElement {
     return <Stack
         horizontal
         grow
@@ -30,24 +28,44 @@ export function AppFooter(props: IAppFooterProps) {
     >
         {
             props.gradeOptions.map(option => 
-                <Stack.Item>
-                    <CompoundButton
-                        primary={props.grade===option.grade}
-                        secondaryText={option.description}
-                        disabled={props.disabled}
-                        onClick={() => {
-                            props.onGraded(option.grade)
-                        }}
-                        styles={{
-                            root: {
-                                height: "100%"
-                            }
-                        }}
-                    >
-                        {option.grade}
-                    </CompoundButton>
-                </Stack.Item>
+                <GradeButton
+                    key={option.grade}
+                    option={option}
+                    primary={props.grade===option.grade}
+                    disabled={props.disabled}
+                    onClick={props.onGraded}
+                />
             )
         }
     </Stack>;
+}
+
+interface IGradeButtonProps {
+    option: IGradeOptions;
+    primary: boolean;
+    disabled: boolean;
+    onClick: (grade: number) => void;
+}
+function GradeButton(props: IGradeButtonProps): React.ReactElement {
+    const { option, primary, disabled, onClick } = props;
+
+    const clickCallback = React.useCallback(() => {
+        onClick(option.grade);
+    }, [onClick, option]);
+
+    return <Stack.Item>
+        <CompoundButton
+            primary={primary}
+            secondaryText={option.description}
+            disabled={disabled}
+            onClick={clickCallback}
+            styles={{
+                root: {
+                    height: "100%"
+                }
+            }}
+        >
+            {option.grade}
+        </CompoundButton>
+    </Stack.Item>
 }

@@ -2,7 +2,7 @@ import * as fs from "fs";
 import { Gradebook } from "../api/Gradebook";
 
 export class GradebookUtilities {
-    public static fromDumpFile(path: string) {
+    public static fromDumpFile(path: string): Gradebook {
         if (!fs.existsSync(path)) {
             return new Gradebook();
         }
