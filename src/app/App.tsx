@@ -13,34 +13,14 @@ import {
     Text
 } from '@fluentui/react';
 import { Gradebook } from '../harness/api/Gradebook';
-import { AppCommandBar } from './components/AppCommandBar';
-import { GradeButtons, IGradeOptions } from './components/GradeButtons';
-
 import { ReadingResponse } from '../harness/api/ReadingResponse';
-import { ResponseView } from './components/ResponseView';
 
-const gradeOptions: Array<IGradeOptions> = [
-    {
-        grade: 0.0,
-        description: "The response was blank, completely irrelevant, or appeared to be AI generated."
-    },
-    {
-        grade: 0.4,
-        description: "The response was on topic but did not reference the chapter."
-    },
-    {
-        grade: 0.6,
-        description: "The response covered the chapter but lacked a lot of detail."
-    },
-    {
-        grade: 0.8,
-        description: "The response covered the chapter but lacked some detail."
-    },
-    {
-        grade: 1.0,
-        description: "The response covered the entire chapter with sufficient detail."
-    }
-];
+import { AppCommandBar } from './components/AppCommandBar';
+import { GradeButtons } from './components/GradeButtons';
+import { ResponseView } from './components/ResponseView';
+import { GRADE_OPTIONS } from './config/GradeOptions';
+
+
 
 const NOT_GRADED_KEY: 'Not Graded' = 'Not Graded';
 const NO_CREDIT_KEY: 'No Credit' = 'No Credit';
@@ -312,7 +292,7 @@ export function App(): React.ReactElement {
             {/* Bottom Row */}
             <div>
                 <GradeButtons
-                    gradeOptions={gradeOptions}
+                    gradeOptions={GRADE_OPTIONS}
                     disabled={!selectedResponse}
                     grade={selectedResponse && gradebookData ? gradebookData.grades.get(selectedResponse.username) : undefined}
                     onGraded={onGraded}

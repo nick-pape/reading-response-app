@@ -1,10 +1,6 @@
 import { CompoundButton, IStackTokens, Stack } from '@fluentui/react';
 import * as React from 'react';
-
-export interface IGradeOptions {
-    grade: number;
-    description: string;
-}
+import { IGradeOptions } from '../config/GradeOptions';
 
 export interface IAppFooterProps {
     gradeOptions: Array<IGradeOptions>;
