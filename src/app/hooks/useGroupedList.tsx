@@ -1,21 +1,18 @@
 import * as React from 'react';
 import { DetailsRow, GroupedList, IGroup, Selection, SelectionMode, SelectionZone, Text } from '@fluentui/react';
-import { ReadingResponse } from '../../harness/api/ReadingResponse';
-import { ReadingResponses } from '../../harness/api/ReadingResponses';
 import { GROUP_KEYS, IUserListItems } from './useMergedListItems';
 
 export interface IUseGroupedListProps {
     userListItems: Array<IUserListItems> | undefined;
-    responses: ReadingResponses | undefined;
     groups: Array<IGroup>;
-    setSelectedResponse: (response: ReadingResponse | undefined) => void;
+    setSelectedUser: (user: string | undefined) => void;
 }
 
 export function useGroupedList(props: IUseGroupedListProps): {
     selection: Selection
     groupList: React.ReactElement
 } {
-    const { userListItems, responses, groups, setSelectedResponse } = props;
+    const { userListItems, groups, setSelectedUser } = props;
 
     // Create a selection object to keep track of selected items
     const selection = React.useMemo(() =>
@@ -24,10 +21,9 @@ export function useGroupedList(props: IUseGroupedListProps): {
                 const selected = selection.getSelection();
 
                 if (selected.length === 0) {
-                    setSelectedResponse(undefined);
+                    setSelectedUser(undefined);
                 } else {
-                    const response = responses?.responses.get(selected[0].key as string);
-                    setSelectedResponse(response);
+                    setSelectedUser(selected[0].key as string);
                 }
             },
             canSelectItem: (item, index) => {
@@ -35,7 +31,7 @@ export function useGroupedList(props: IUseGroupedListProps): {
             },
             selectionMode: SelectionMode.multiple,
         }
-    ), [setSelectedResponse, responses]);
+    ), [setSelectedUser]);
 
     React.useEffect(() => {
         selection.setItems(userListItems || [], false);

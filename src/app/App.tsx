@@ -3,7 +3,6 @@ import { ReadingResponses } from '../harness/api/ReadingResponses';
 
 import { Stack } from '@fluentui/react';
 import { Gradebook } from '../harness/api/Gradebook';
-import { ReadingResponse } from '../harness/api/ReadingResponse';
 
 import { AppCommandBar } from './components/AppCommandBar';
 import { GradeButtons } from './components/GradeButtons';
@@ -19,11 +18,15 @@ import { useGradingAction } from './hooks/useGradingAction';
  */
 export function App(): React.ReactElement {
     const [responses, setResponses] = React.useState<ReadingResponses | undefined>(undefined);
-    const [selectedResponse, setSelectedResponse] = React.useState<ReadingResponse | undefined>(undefined);
+    const [selectedUser, setSelectedUser] = React.useState<string | undefined>(undefined);
     const [gradebookData, setGradebookData] = React.useState<Gradebook | undefined>(undefined);
 
+    const selectedResponse = React.useMemo(() => {
+        return selectedUser ? responses?.responses.get(selectedUser) : undefined;
+    }, [selectedUser, responses])
+
     const { userListItems, counts, groups } = useMergedListItems({ responses, gradebookData });
-    const { selection, groupList } = useGroupedList({ userListItems, groups, responses, setSelectedResponse });
+    const { selection, groupList } = useGroupedList({ userListItems, groups, setSelectedUser });
     const { onLoadFile, onNextClicked, onBackClicked } = useCommandBarActions({ selection, setGradebookData, setResponses });
     const { onGraded } = useGradingAction({ selection, counts, selectedResponse, gradebookData, setGradebookData });
 
