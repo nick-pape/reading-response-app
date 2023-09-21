@@ -7,22 +7,24 @@ export interface ICommandBarProps {
     onNext: () => void;
     onBack: () => void;
     hasLoadedFile: boolean;
+    isReviewEnabled: boolean;
 }
 
 export function AppCommandBar(props: ICommandBarProps) {
     const _items: ICommandBarItemProps[] = [
         {
-          key: 'loadFile',
-          text: 'Load',
-          iconProps: { iconName: 'OpenFile' },
-          onClick: props.onLoadFile
+            key: 'loadFile',
+            text: 'Load',
+            iconProps: { iconName: 'OpenFile' },
+            onClick: props.onLoadFile,
+            disabled: props.hasLoadedFile
         },
         {
             key: 'review',
             text: 'Review',
             iconProps: { iconName: 'DecisionSolid' },
             onClick: props.onReview,
-            disabled: !props.hasLoadedFile
+            disabled: !props.hasLoadedFile || !props.isReviewEnabled
         }
     ];
 

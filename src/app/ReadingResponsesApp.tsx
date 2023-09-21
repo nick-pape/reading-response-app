@@ -164,6 +164,7 @@ export function ReadingResponsesApp() {
             <div style={{ height: '50px'  }}>
                 <AppCommandBar
                     hasLoadedFile={!!responses}
+                    isReviewEnabled={countUngraded === 0}
                     onLoadFile={() => {
                         Electron.openFile().then((data) => {
                             setResponses(data.responses);
