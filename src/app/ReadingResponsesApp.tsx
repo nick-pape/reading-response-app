@@ -125,34 +125,69 @@ export function ReadingResponsesApp() {
     }, [usernames, countUngraded]);
 
     // Create a selection object to keep track of selected items
-    
-    const selection = React.useMemo(() => {
-        const selection = new Selection({
-            canSelectItem: (item, index) => {
-                return item.key !== 'NotGraded' && item.key !== 'Graded';
-            },
-
+    const selection = React.useMemo(() =>
+        new Selection({
             onSelectionChanged: () => {
-                // Handle selection changes here, if needed
-                const selectedItems = selection.getSelection();
+                //console.log('handle selection change',selection.getSelection())
+                const selected = selection.getSelection();
 
-                if (selectedItems.length === 1) {
-                    setSelectedResponse(responses?.responses.get(selectedItems[0].key as string));
-                } else if (selectedItems.length === 0) {
+                if (selected.length === 0) {
                     setSelectedResponse(undefined);
+                } else {
+                    const response = responses?.responses.get(selected[0].key as string);
+                    setSelectedResponse(response);
                 }
-
             },
-            selectionMode: SelectionMode.single
-        });
+            canSelectItem: (item, index) => {
+                return (item.key !== 'NotGraded' && item.key !== 'Graded');
+            },
+            selectionMode: SelectionMode.multiple,
+         }
+    ), [setSelectedResponse, responses]);
 
-        if (usernames) {
-            selection.setItems(usernames);
-            selection.setIndexSelected(0, true, true);
-        }
+    React.useEffect(() => {
+        debugger;
+        selection.setItems(usernames || [], false);
+    }, [usernames, selection])
 
-        return selection;
-    }, [usernames]);
+    const groupList = React.useMemo(() => {
+        return usernames ?
+            <SelectionZone selection={selection} selectionMode={SelectionMode.single}>
+                <GroupedList
+                    items={usernames}
+                    onRenderCell={(
+                        nestingDepth?: number,
+                        item?: string,
+                        itemIndex?: number,
+                        group?: IGroup,
+                    )=> (
+                        <DetailsRow
+                            columns={[
+                                {
+                                    key: 'username',
+                                    name: 'User',
+                                    fieldName: 'username',
+                                    minWidth: 200,
+                                }
+                            ]}
+                            groupNestingDepth={nestingDepth}
+                            item={item}
+                            itemIndex={itemIndex!}
+                            selection={selection}
+                            selectionMode={SelectionMode.single}
+                            compact={true}
+                            group={group}
+                        />
+                    )}
+                    onShouldVirtualize={ () => false }
+                    groups={groups}
+                    selectionMode={SelectionMode.single}
+                    selection={selection} // Pass the selection object
+                    compact
+                />
+                </SelectionZone>
+            : <Text variant='small'>Please load a reading response file...</Text>
+    }, [usernames, selection, groups])
 
     return (
 
@@ -211,42 +246,7 @@ export function ReadingResponsesApp() {
             >
                 {/* First Column */}
                 <div style={{ width: '250px', overflowY: 'scroll' }}>
-                    {usernames ?
-                        <SelectionZone selection={selection} selectionMode={SelectionMode.single}>
-                        <GroupedList
-                            items={usernames}
-                            onRenderCell={(
-                                nestingDepth?: number,
-                                item?: string,
-                                itemIndex?: number,
-                                group?: IGroup,
-                            )=> (
-                                <DetailsRow
-                                    columns={[
-                                        {
-                                            key: 'username',
-                                            name: 'User',
-                                            fieldName: 'username',
-                                            minWidth: 200,
-                                        }
-                                    ]}
-                                    groupNestingDepth={nestingDepth}
-                                    item={item}
-                                    itemIndex={itemIndex!}
-                                    selection={selection}
-                                    selectionMode={SelectionMode.single}
-                                    compact={true}
-                                    group={group}
-                                />
-                            )}
-                            groups={groups}
-                            selectionMode={SelectionMode.single}
-                            selection={selection} // Pass the selection object
-                            compact
-                        />
-                        </SelectionZone>
-                    : <Text variant='small'>Please load a reading response file...</Text>
-                    }
+                    {groupList}
                 </div>
 
                 {/* Second Column */}
@@ -266,9 +266,25 @@ export function ReadingResponsesApp() {
                     onGraded={async (grade: number) => {
                         if (selectedResponse && gradebookData) {
                             console.log(selectedResponse.username, grade);
+
+                            const alreadyHadGrade = gradebookData.grades.get(selectedResponse.username) !== undefined;
+
                             gradebookData.grades.set(selectedResponse.username, grade);
                             const newGradebook = new Gradebook({ grades: gradebookData.grades });
                             setGradebookData(newGradebook);
+
+                            // move to whatever item will be in this spot
+                            debugger;
+                            if (!alreadyHadGrade) {
+                                const selectedItems = selection.getSelectedIndices();
+                                const currentIndex = selectedItems[0];
+                                const items = selection.getItems();
+                                const nextIndex = Math.max(0, Math.min(items.length - 1, currentIndex + 1));
+                                const newKey = items[nextIndex].key as string;
+                                selection.setKeySelected(selectedResponse.username, false, false);
+                                selection.setKeySelected(newKey, true, false);
+                            }
+
                             await Electron.saveGrades(newGradebook);
                         }
                     }}
