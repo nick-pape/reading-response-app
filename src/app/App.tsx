@@ -19,22 +19,14 @@ import { AppCommandBar } from './components/AppCommandBar';
 import { GradeButtons } from './components/GradeButtons';
 import { ResponseView } from './components/ResponseView';
 import { GRADE_OPTIONS } from './config/GradeOptions';
+import { GROUP_KEYS, NOT_GRADED_KEY, useGroupings } from './hooks/useGroupings';
 
 
-
-const NOT_GRADED_KEY: 'Not Graded' = 'Not Graded';
-const NO_CREDIT_KEY: 'No Credit' = 'No Credit';
-const PARTIAL_CREDIT_KEY: 'Partial Credit' = 'Partial Credit';
-const FULL_CREDIT_KEY: 'Full Credit' = 'Full Credit';
-
-interface IResponseCounts {
-    [NOT_GRADED_KEY]: number;
-    [NO_CREDIT_KEY]: number;
-    [PARTIAL_CREDIT_KEY]: number;
-    [FULL_CREDIT_KEY]: number;
+export interface IUserListItems {
+    key: string;
+    username: string;
+    grade: number | undefined;
 }
-
-const GROUP_KEYS: Set<string> = new Set<string>([NOT_GRADED_KEY, NO_CREDIT_KEY, PARTIAL_CREDIT_KEY, FULL_CREDIT_KEY]);
 
 /**
  * This React component renders the application page.
@@ -44,7 +36,7 @@ export function App(): React.ReactElement {
     const [selectedResponse, setSelectedResponse] = React.useState<ReadingResponse | undefined>(undefined);
     const [gradebookData, setGradebookData] = React.useState<Gradebook | undefined>(undefined);
 
-    const usernames = React.useMemo(() => {
+    const usernames: Array<IUserListItems> | undefined = React.useMemo(() => {
         if (responses && gradebookData) {
             const list = [...responses.responses.keys()].map((username) => {
                 return {
@@ -77,51 +69,9 @@ export function App(): React.ReactElement {
         return undefined;
     }, [responses, gradebookData]);
 
-    const counts: IResponseCounts = React.useMemo(() => {
-        const count: IResponseCounts = {
-            [NOT_GRADED_KEY]: 0,
-            [NO_CREDIT_KEY]: 0,
-            [PARTIAL_CREDIT_KEY]: 0,
-            [FULL_CREDIT_KEY]: 0
-        };
+    const { counts, groups } = useGroupings({ usernames });
 
-        if (!usernames) {
-            return count;
-        }
-
-        usernames.map(item => {
-            if (item.grade === undefined) {
-                count[NOT_GRADED_KEY] += 1;
-            } else if (item.grade === 1.0) {
-                count[FULL_CREDIT_KEY] += 1;
-            } else if (item.grade === 0.0) {
-                count[NO_CREDIT_KEY] += 1;
-            } else {
-                count[PARTIAL_CREDIT_KEY] += 1;
-            }
-        });
-
-        return count;
-    }, [usernames]);
-
-    // Create two groups: 'In Gradebook' and 'Not In Gradebook'
-    const groups = React.useMemo(() => {
-        let indexSoFar: number = 0;
-
-        return [NOT_GRADED_KEY, NO_CREDIT_KEY, PARTIAL_CREDIT_KEY, FULL_CREDIT_KEY].reduce((prev: IGroup[], key: string) => {
-            const count = counts[key as keyof IResponseCounts];
-            if (count !== 0) {
-                prev.push({
-                    key,
-                    name: key,
-                    startIndex: indexSoFar,
-                    count
-                });
-                indexSoFar += count;
-            }
-            return prev;
-        }, [] as IGroup[]);
-    }, [usernames, counts]);
+    
 
     // Create a selection object to keep track of selected items
     const selection = React.useMemo(() =>

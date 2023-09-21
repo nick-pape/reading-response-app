@@ -1,5 +1,5 @@
-import { CompoundButton, IStackTokens, Stack } from '@fluentui/react';
 import * as React from 'react';
+import { CompoundButton, IStackTokens, Stack } from '@fluentui/react';
 import { IGradeOptions } from '../config/GradeOptions';
 
 export interface IAppFooterProps {
