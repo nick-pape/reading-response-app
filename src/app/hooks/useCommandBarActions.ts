@@ -8,15 +8,17 @@ import { Gradebook } from '../../harness/api/Gradebook';
 export interface IUseCommandBarActionsProps {
     setResponses: (responses: ReadingResponses | undefined) => void;
     setGradebookData: (gradebook: Gradebook | undefined) => void;
+    setIsReviewMode: (isReviewMode: boolean) => void;
     selection: Selection;
 }
 
 export function useCommandBarActions(props: IUseCommandBarActionsProps): {
     onLoadFile: () => void
     onNextClicked: () => void
-    onBackClicked: () => void
+    onBackClicked: () => void,
+    onReviewMode: () => void
 } {
-    const { setResponses, setGradebookData, selection } = props;
+    const { setResponses, setGradebookData, setIsReviewMode, selection } = props;
 
     const onLoadFile = React.useCallback(() => {
         Electron.openFile().then((data) => {
@@ -55,9 +57,14 @@ export function useCommandBarActions(props: IUseCommandBarActionsProps): {
         }
     }, [selection]);
 
+    const onReviewMode = React.useCallback(() => {
+        setIsReviewMode(true);
+    }, []);
+
     return {
         onLoadFile,
         onNextClicked,
-        onBackClicked
+        onBackClicked,
+        onReviewMode
     };
 }

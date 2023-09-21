@@ -10,12 +10,13 @@ async function createWindow(): Promise<void> {
     const win = new BrowserWindow({
         width: 1600,
         height: 1200,
+        icon: path.join(__dirname, '../../assets/robot.icns'),
         webPreferences: {
             preload: path.join(__dirname, 'preload.js')
         }
     });
 
-    //win.removeMenu();
+    win.removeMenu();
     win.setTitle("RL Reading Response Grader")
     await win.loadFile('dist/index.html')
 }

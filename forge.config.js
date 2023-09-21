@@ -1,7 +1,9 @@
 module.exports = {
   packagerConfig: {
     asar: true,
+    icon: 'assets/robot'
   },
+  
   rebuildConfig: {},
   makers: [
     {

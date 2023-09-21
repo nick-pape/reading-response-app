@@ -24,6 +24,10 @@ function createWebpackConfig({ production }) {
           test: /\.js$/,
           enforce: 'pre',
           use: ['source-map-loader']
+        },
+        {
+            test: /\.(ttf|otf|eot|svg|woff2|woff)$/,
+            type: 'asset/resource'
         }
       ]
     },

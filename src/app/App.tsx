@@ -12,6 +12,7 @@ import { NOT_GRADED_KEY, useMergedListItems } from './hooks/useMergedListItems';
 import { useGroupedList } from './hooks/useGroupedList';
 import { useCommandBarActions } from './hooks/useCommandBarActions';
 import { useGradingAction } from './hooks/useGradingAction';
+import { ReviewModal } from './components/ReviewModal';
 
 /**
  * This React component renders the application page.
@@ -20,6 +21,7 @@ export function App(): React.ReactElement {
     const [responses, setResponses] = React.useState<ReadingResponses | undefined>(undefined);
     const [selectedUser, setSelectedUser] = React.useState<string | undefined>(undefined);
     const [gradebookData, setGradebookData] = React.useState<Gradebook | undefined>(undefined);
+    const [isReviewMode, setIsReviewMode] = React.useState<boolean>(false);
 
     const selectedResponse = React.useMemo(() => {
         return selectedUser ? responses?.responses.get(selectedUser) : undefined;
@@ -27,14 +29,18 @@ export function App(): React.ReactElement {
 
     const { userListItems, counts, groups } = useMergedListItems({ responses, gradebookData });
     const { selection, groupList } = useGroupedList({ userListItems, groups, setSelectedUser });
-    const { onLoadFile, onNextClicked, onBackClicked } = useCommandBarActions({ selection, setGradebookData, setResponses });
+    const { onLoadFile, onNextClicked, onBackClicked, onReviewMode } = useCommandBarActions({ selection, setGradebookData, setResponses, setIsReviewMode });
     const { onGraded } = useGradingAction({ selection, counts, selectedResponse, gradebookData, setGradebookData });
 
-    const noop = React.useCallback(() => {
+    const closeReviewMode = React.useCallback(() => {
+        setIsReviewMode(false);
+    }, [setIsReviewMode])
 
-    }, []);
-
-    return (
+    return (<>
+        <ReviewModal
+            isOpen={isReviewMode}
+            onClose={closeReviewMode}
+        />
         <Stack
             verticalAlign="stretch"
             styles={{ root: { height: '100vh' } }}
@@ -45,7 +51,7 @@ export function App(): React.ReactElement {
                     hasLoadedFile={!!responses}
                     isReviewEnabled={counts[NOT_GRADED_KEY] === 0}
                     onLoadFile={onLoadFile}
-                    onReview={noop}
+                    onReview={onReviewMode}
                     onNext={onNextClicked}
                     onBack={onBackClicked}
                 />
@@ -80,5 +86,5 @@ export function App(): React.ReactElement {
                 />
             </div>
         </Stack>
-    );
+    </>);
 }
