@@ -30,13 +30,13 @@ export interface IUserListItems {
 }
 
 export function useMergedListItems(props: IUseGroupingsProps): {
-    usernames: Array<IUserListItems> | undefined;
+    userListItems: Array<IUserListItems> | undefined;
     counts: IResponseCounts;
     groups: Array<IGroup>
 } {
     const { responses, gradebookData } = props;
 
-    const usernames: Array<IUserListItems> | undefined = React.useMemo(() => {
+    const userListItems: Array<IUserListItems> | undefined = React.useMemo(() => {
         if (responses && gradebookData) {
             const list = [...responses.responses.keys()].map((username) => {
                 return {
@@ -77,11 +77,11 @@ export function useMergedListItems(props: IUseGroupingsProps): {
             [FULL_CREDIT_KEY]: 0
         };
 
-        if (!usernames) {
+        if (!userListItems) {
             return count;
         }
 
-        usernames.map(item => {
+        userListItems.map(item => {
             if (item.grade === undefined) {
                 count[NOT_GRADED_KEY] += 1;
             } else if (item.grade === 1.0) {
@@ -94,7 +94,7 @@ export function useMergedListItems(props: IUseGroupingsProps): {
         });
 
         return count;
-    }, [usernames]);
+    }, [userListItems]);
 
     // Create two groups: 'In Gradebook' and 'Not In Gradebook'
     const groups = React.useMemo(() => {
@@ -113,7 +113,7 @@ export function useMergedListItems(props: IUseGroupingsProps): {
             }
             return prev;
         }, [] as IGroup[]);
-    }, [usernames, counts]);
+    }, [userListItems, counts]);
 
-    return { usernames, counts, groups };
+    return { userListItems, counts, groups };
 }

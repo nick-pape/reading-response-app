@@ -5,7 +5,7 @@ import { ReadingResponses } from '../../harness/api/ReadingResponses';
 import { GROUP_KEYS, IUserListItems } from './useMergedListItems';
 
 export interface IUseGroupedListProps {
-    usernames: Array<IUserListItems> | undefined;
+    userListItems: Array<IUserListItems> | undefined;
     responses: ReadingResponses | undefined;
     groups: Array<IGroup>;
     setSelectedResponse: (response: ReadingResponse | undefined) => void;
@@ -15,7 +15,7 @@ export function useGroupedList(props: IUseGroupedListProps): {
     selection: Selection
     groupList: React.ReactElement
 } {
-    const { usernames, responses, groups, setSelectedResponse } = props;
+    const { userListItems, responses, groups, setSelectedResponse } = props;
 
     // Create a selection object to keep track of selected items
     const selection = React.useMemo(() =>
@@ -38,8 +38,8 @@ export function useGroupedList(props: IUseGroupedListProps): {
     ), [setSelectedResponse, responses]);
 
     React.useEffect(() => {
-        selection.setItems(usernames || [], false);
-    }, [usernames, selection]);
+        selection.setItems(userListItems || [], false);
+    }, [userListItems, selection]);
 
     const onRenderCell = React.useCallback((
         nestingDepth?: number,
@@ -67,10 +67,10 @@ export function useGroupedList(props: IUseGroupedListProps): {
     ), [selection]);
 
     const groupList = React.useMemo(() => {
-        return usernames ?
+        return userListItems ?
             <SelectionZone selection={selection} selectionMode={SelectionMode.single}>
                 <GroupedList
-                    items={usernames}
+                    items={userListItems}
                     onRenderCell={onRenderCell}
                     groups={groups}
                     selectionMode={SelectionMode.single}
@@ -79,7 +79,7 @@ export function useGroupedList(props: IUseGroupedListProps): {
                 />
                 </SelectionZone>
             : <Text variant='small'>Please load a reading response file...</Text>
-    }, [usernames, selection, groups])
+    }, [userListItems, selection, groups])
 
 
     return {

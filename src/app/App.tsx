@@ -22,8 +22,8 @@ export function App(): React.ReactElement {
     const [selectedResponse, setSelectedResponse] = React.useState<ReadingResponse | undefined>(undefined);
     const [gradebookData, setGradebookData] = React.useState<Gradebook | undefined>(undefined);
 
-    const { usernames, counts, groups } = useMergedListItems({ responses, gradebookData });
-    const { selection, groupList } = useGroupedList({ usernames, groups, responses, setSelectedResponse });
+    const { userListItems, counts, groups } = useMergedListItems({ responses, gradebookData });
+    const { selection, groupList } = useGroupedList({ userListItems, groups, responses, setSelectedResponse });
     const { onLoadFile, onNextClicked, onBackClicked } = useCommandBarActions({ selection, setGradebookData, setResponses });
     const { onGraded } = useGradingAction({ selection, counts, selectedResponse, gradebookData, setGradebookData });
 
