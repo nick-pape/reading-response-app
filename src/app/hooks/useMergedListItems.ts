@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { IUserListItems } from '../App';
+import { ReadingResponses } from '../../harness/api/ReadingResponses';
+import { Gradebook } from '../../harness/api/Gradebook';
 import { IGroup } from '@fluentui/react';
 
 export const NOT_GRADED_KEY: 'Not Graded' = 'Not Graded';
@@ -18,14 +19,55 @@ export const GROUP_KEYS: Set<string> = new Set<string>([NOT_GRADED_KEY, NO_CREDI
 
 
 export interface IUseGroupingsProps {
-    usernames: Array<IUserListItems> | undefined
+    responses: ReadingResponses | undefined;
+    gradebookData: Gradebook | undefined;
 }
 
-export function useGroupings(props: IUseGroupingsProps): {
-    counts: IResponseCounts,
+export interface IUserListItems {
+    key: string;
+    username: string;
+    grade: number | undefined;
+}
+
+export function useMergedListItems(props: IUseGroupingsProps): {
+    usernames: Array<IUserListItems> | undefined;
+    counts: IResponseCounts;
     groups: Array<IGroup>
 } {
-    const { usernames } = props;
+    const { responses, gradebookData } = props;
+
+    const usernames: Array<IUserListItems> | undefined = React.useMemo(() => {
+        if (responses && gradebookData) {
+            const list = [...responses.responses.keys()].map((username) => {
+                return {
+                    key: username,
+                    username,
+                    grade: gradebookData.grades.get(username)
+                };
+            });
+
+            // Sort the list by grade
+            list.sort((a, b) => {
+                // Check for undefined grades
+                if (a.grade === undefined && b.grade === undefined) {
+                    return a.username > b.username ? 1 : -1;
+                } else if (a.grade === undefined) {
+                    return -1;
+                } else if (b.grade === undefined) {
+                    return 1;
+                } else {
+                    // Compare numeric grades
+                    if (a.grade === b.grade) {
+                        return a.username > b.username ? 1 : -1;
+                    }
+                    return a.grade - b.grade;
+                }
+            });
+
+            return list;
+        }
+        return undefined;
+    }, [responses, gradebookData]);
 
     const counts: IResponseCounts = React.useMemo(() => {
         const count: IResponseCounts = {
@@ -73,5 +115,5 @@ export function useGroupings(props: IUseGroupingsProps): {
         }, [] as IGroup[]);
     }, [usernames, counts]);
 
-    return { counts, groups };
+    return { usernames, counts, groups };
 }
