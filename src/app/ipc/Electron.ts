@@ -1,5 +1,5 @@
-import { Gradebook, IGradebook } from '../harness/api/Gradebook';
-import { ReadingResponses } from '../harness/api/ReadingResponses';
+import { Gradebook, IGradebook } from '../../harness/api/Gradebook';
+import { ReadingResponses } from '../../harness/api/ReadingResponses';
 
 interface IOpenFileResponse {
     responses: ReadingResponses | undefined;

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ReadingResponse } from '../harness/api/ReadingResponse';
+import { ReadingResponse } from '../../harness/api/ReadingResponse';
 import { default as markdownIt } from 'markdown-it';
 import { Text } from '@fluentui/react';
 import 'markdown-it-katex/node_modules/katex/dist/katex.min.css'; // Import KaTeX CSS for styling
@@ -15,7 +15,7 @@ export interface IReadingResponseViewerProps {
     response: ReadingResponse | undefined;
 }
 
-export function ReadingResponseViewer(props: IReadingResponseViewerProps): React.ReactElement {
+export function ResponseView(props: IReadingResponseViewerProps): React.ReactElement {
     const markdown = React.useMemo(() => {
         if (!props.response) {
             return '';

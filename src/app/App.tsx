@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ReadingResponses } from '../harness/api/ReadingResponses';
-import { Electron } from './Electron';
+import { Electron } from './ipc/Electron';
 
 import {
     Stack,
@@ -13,11 +13,11 @@ import {
     Text
 } from '@fluentui/react';
 import { Gradebook } from '../harness/api/Gradebook';
-import { AppCommandBar } from './AppCommandBar';
-import { AppFooter, IGradeOptions } from './AppFooter';
+import { AppCommandBar } from './components/AppCommandBar';
+import { GradeButtons, IGradeOptions } from './components/GradeButtons';
 
 import { ReadingResponse } from '../harness/api/ReadingResponse';
-import { ReadingResponseViewer } from './ReadingResponseViewer';
+import { ResponseView } from './components/ResponseView';
 
 const gradeOptions: Array<IGradeOptions> = [
     {
@@ -59,7 +59,7 @@ const GROUP_KEYS: Set<string> = new Set<string>([NOT_GRADED_KEY, NO_CREDIT_KEY, 
 /**
  * This React component renders the application page.
  */
-export function ReadingResponsesApp(): React.ReactElement {
+export function App(): React.ReactElement {
     const [responses, setResponses] = React.useState<ReadingResponses | undefined>(undefined);
     const [selectedResponse, setSelectedResponse] = React.useState<ReadingResponse | undefined>(undefined);
     const [gradebookData, setGradebookData] = React.useState<Gradebook | undefined>(undefined);
@@ -303,7 +303,7 @@ export function ReadingResponsesApp(): React.ReactElement {
 
                 {/* Second Column */}
                 <div style={{ flex: 1, overflowY: 'auto', backgroundColor: 'lightgrey' }}>
-                    <ReadingResponseViewer
+                    <ResponseView
                         response={selectedResponse}
                     />
                 </div>
@@ -311,7 +311,7 @@ export function ReadingResponsesApp(): React.ReactElement {
 
             {/* Bottom Row */}
             <div>
-                <AppFooter
+                <GradeButtons
                     gradeOptions={gradeOptions}
                     disabled={!selectedResponse}
                     grade={selectedResponse && gradebookData ? gradebookData.grades.get(selectedResponse.username) : undefined}

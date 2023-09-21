@@ -18,7 +18,7 @@ const themedMediumStackTokens: IStackTokens = {
     padding: 's1',
 };
 
-export function AppFooter(props: IAppFooterProps): React.ReactElement {
+export function GradeButtons(props: IAppFooterProps): React.ReactElement {
     return <Stack
         horizontal
         grow
