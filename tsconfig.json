@@ -26,7 +26,7 @@
       "module": "esnext",
       "moduleResolution": "node",
       "target": "es5",
-      "lib": ["es5", "scripthost", "es2015.collection", "es2015.promise", "es2015.iterable", "dom", "es2017"]
+      "lib": ["es2019", "scripthost", "es2015.collection", "es2015.promise", "es2015.iterable", "dom", "es2017"]
     },
     "include": ["src/**/*.ts", "src/**/*.tsx"],
     "exclude": ["node_modules", "lib"]

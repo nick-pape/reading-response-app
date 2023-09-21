@@ -7,7 +7,6 @@ import {
     SelectionMode,
     GroupedList,
     Selection,
-    DetailsList,
     DetailsRow,
     IGroup,
     SelectionZone,
@@ -50,11 +49,10 @@ const gradeOptions: Array<IGradeOptions> = [
 export function ReadingResponsesApp() {
     const [responses, setResponses] = React.useState<ReadingResponses | undefined>(undefined);
     const [selectedResponse, setSelectedResponse] = React.useState<ReadingResponse | undefined>(undefined);
-    const [gradebookData, setGradebookData] = React.useState<Gradebook>(new Gradebook());
+    const [gradebookData, setGradebookData] = React.useState<Gradebook | undefined>(undefined);
 
     const usernames = React.useMemo(() => {
-        if (responses) {
-            
+        if (responses && gradebookData) {
             const list = [...responses.responses.keys()].map((username) => {
                 return {
                     key: username,
@@ -168,7 +166,8 @@ export function ReadingResponsesApp() {
                     hasLoadedFile={!!responses}
                     onLoadFile={() => {
                         Electron.openFile().then((data) => {
-                            setResponses(data);
+                            setResponses(data.responses);
+                            setGradebookData(data.grades)
                         }).catch(() => { })
                     }}
                     onReview={() => {}}
@@ -262,17 +261,18 @@ export function ReadingResponsesApp() {
                 <AppFooter
                     gradeOptions={gradeOptions}
                     disabled={!selectedResponse}
-                    grade={selectedResponse ? gradebookData.grades.get(selectedResponse.username) : undefined}
-                    onGraded={(grade: number) => {
-                        if (selectedResponse) {
+                    grade={selectedResponse && gradebookData ? gradebookData.grades.get(selectedResponse.username) : undefined}
+                    onGraded={async (grade: number) => {
+                        if (selectedResponse && gradebookData) {
                             console.log(selectedResponse.username, grade);
                             gradebookData.grades.set(selectedResponse.username, grade);
-                            setGradebookData(new Gradebook({ grades: gradebookData.grades }));
+                            const newGradebook = new Gradebook({ grades: gradebookData.grades });
+                            setGradebookData(newGradebook);
+                            await Electron.saveGrades(newGradebook);
                         }
                     }}
                 />
             </div>
         </Stack>
-
     );
 }

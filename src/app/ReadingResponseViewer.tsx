@@ -41,7 +41,11 @@ export function ReadingResponseViewer(props: IReadingResponseViewerProps) {
             {props.response.username}
         </Text>
         <span
-            
+            style={{
+                position: 'relative',
+                top: '0',
+                bottom: '0'
+            }}
             dangerouslySetInnerHTML={{ __html: markdown }}
         />
     </>;
