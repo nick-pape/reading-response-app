@@ -1,0 +1,50 @@
+name: Version Bump & Release Tag
+
+on:
+  workflow_dispatch:
+    inputs:
+      bump_type:
+        description: 'Version bump type (major, minor, patch)'
+        required: true
+        default: 'minor' # Default to 'minor' if not specified
+
+jobs:
+  bump-version:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 18.x # Use the Node.js version you prefer
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Get current version
+        id: get-version
+        run: echo "::set-output name=current_version::$(node -p "require('./package.json').version")"
+
+      - name: Bump version
+        id: bump-version
+        run: |
+          current_version="${{ steps.get-version.outputs.current_version }}"
+          bump_type="${{ github.event.inputs.bump_type }}"
+          new_version=$(npx semver -i $bump_type $current_version)
+          echo "::set-output name=new_version::$new_version"
+          npm version --no-git-tag-version $new_version
+
+      - name: Commit version bump
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add package.json package-lock.json
+          git commit -m "Bump version to ${{ steps.bump-version.outputs.new_version }}"
+
+      - name: Create and push tag
+        run: |
+          git tag "v${{ steps.bump-version.outputs.new_version }}"
+          git push origin "v${{ steps.bump-version.outputs.new_version }}"
