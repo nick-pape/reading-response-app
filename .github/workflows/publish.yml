@@ -155,11 +155,19 @@ jobs:
       - name: Get current version
         id: get-version
         run: echo "::set-output name=current_version::$(node -p "require('./package.json').version")"
+          
+      - name: Get next version
+        id: next-version
+        run: |
+          current_version="${{ steps.get-version.outputs.current_version }}"
+          bump_type="${{ github.event.inputs.bump_type }}"
+          new_version=$(npx semver -i $bump_type $current_version)
+          echo "::set-output name=new_version::$new_version"
 
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: v${{ steps.get-version.outputs.current_version }}
+          tag_name: v${{ steps.next-version.outputs.new_version }}
           files: |
             out/make/artifact/rpm/x64/*.rpm
             out/make/artifact/*.dmg
