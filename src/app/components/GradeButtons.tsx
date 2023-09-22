@@ -49,7 +49,13 @@ function GradeButton(props: IGradeButtonProps): React.ReactElement {
         onClick(option.grade);
     }, [onClick, option]);
 
-    return <Stack.Item>
+    return <Stack.Item
+        styles={{
+            root: {
+                flexShrink: '1'
+            }
+        }}
+    >
         <CompoundButton
             primary={primary}
             secondaryText={option.description}
