@@ -75,7 +75,7 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: v${{ steps.get-version.outputs.current_version }}
+          tag_name: v${{ steps.get-version.outputs.new_version }}
           files: |
             out/make/squirrel.windows/x64/*.exe
 
