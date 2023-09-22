@@ -59,7 +59,7 @@ export function ReviewModal(props: IReviewModalProps): React.ReactElement {
             />
         </div>
         <div className={contentStyles.body}>
-            Blah Blah Blah
+            Still working on this. =)
         </div>
     </Modal>
 };
