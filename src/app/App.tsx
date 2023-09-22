@@ -22,6 +22,7 @@ export function App(): React.ReactElement {
     const [selectedUser, setSelectedUser] = React.useState<string | undefined>(undefined);
     const [gradebookData, setGradebookData] = React.useState<Gradebook | undefined>(undefined);
     const [isReviewMode, setIsReviewMode] = React.useState<boolean>(false);
+    const [parseError, setParseError] = React.useState<string | undefined>(undefined);
 
     const selectedResponse = React.useMemo(() => {
         return selectedUser ? responses?.responses.get(selectedUser) : undefined;
@@ -29,12 +30,16 @@ export function App(): React.ReactElement {
 
     const { userListItems, counts, groups } = useMergedListItems({ responses, gradebookData });
     const { selection, groupList } = useGroupedList({ userListItems, groups, setSelectedUser });
-    const { onLoadFile, onNextClicked, onBackClicked, onReviewMode } = useCommandBarActions({ selection, setGradebookData, setResponses, setIsReviewMode });
+    const { onLoadFile, onNextClicked, onBackClicked, onReviewMode } = useCommandBarActions({ selection, setGradebookData, setResponses, setIsReviewMode, setParseError });
     const { onGraded } = useGradingAction({ selection, counts, selectedResponse, gradebookData, setGradebookData });
 
     const closeReviewMode = React.useCallback(() => {
         setIsReviewMode(false);
     }, [setIsReviewMode])
+
+    const closeParseError = React.useCallback(() => {
+        setParseError(undefined);
+    }, [setParseError])
 
     return (<>
         <ReviewModal
@@ -72,6 +77,8 @@ export function App(): React.ReactElement {
                 <div style={{ flex: 1, overflowY: 'auto', backgroundColor: 'lightgrey' }}>
                     <ResponseView
                         response={selectedResponse}
+                        parseError={parseError}
+                        closeParseError={closeParseError}
                     />
                 </div>
             </Stack>

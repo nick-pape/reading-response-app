@@ -8,8 +8,8 @@ import * as path from 'path';
 
 async function createWindow(): Promise<void> {
     const win = new BrowserWindow({
-        width: 1600,
-        height: 1200,
+        width: 1200,
+        height: 800,
         icon: path.join(__dirname, '../../assets/robot.icns'),
         webPreferences: {
             preload: path.join(__dirname, 'preload.js')
@@ -43,21 +43,33 @@ async function handleSaveGradebook(event: Event, gradebook: IGradebook): Promise
 
 async function handleFileOpen(): Promise<{
     responses: ReadingResponses | undefined,
-    grades: Gradebook | undefined
+    grades: Gradebook | undefined,
+    parseError: string | undefined
 }> {
-    const { canceled, filePaths } = await dialog.showOpenDialog({})
+    const { canceled, filePaths } = await dialog.showOpenDialog({
+        filters: [{
+            name: 'Reading Responses',
+            extensions: ['txt']
+        }],
+        title: 'Load a Reading Response',
+        message: 'This should be a processed text dump, not the raw file from EdX'
+    })
     if (!canceled) {
         responsesPath = filePaths[0];
         gradebookPath = `${filePaths[0]}.grades.json`;
 
+        const { responses, parseError } = ReadingResponsesUtilities.fromDumpFile(responsesPath);
+
         return {
-            responses: ReadingResponsesUtilities.fromDumpFile(responsesPath),
+            parseError,
+            responses,
             grades: GradebookUtilities.fromDumpFile(gradebookPath)
         };
     }
     return {
         responses: undefined,
-        grades: undefined
+        grades: undefined,
+        parseError: undefined
     }
 }
 

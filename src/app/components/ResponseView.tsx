@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ReadingResponse } from '../../harness/api/ReadingResponse';
 import { default as markdownIt } from 'markdown-it';
-import { Text } from '@fluentui/react';
+import { MessageBar, MessageBarType, Text } from '@fluentui/react';
 import 'markdown-it-katex/node_modules/katex/dist/katex.min.css'; // Import KaTeX CSS for styling
 const markdownItKatex: markdownIt.PluginSimple = require('markdown-it-katex');
 
@@ -13,6 +13,8 @@ const MarkDown: markdownIt = markdownIt({
 
 export interface IReadingResponseViewerProps {
     response: ReadingResponse | undefined;
+    parseError: string | undefined;
+    closeParseError: () => void;
 }
 
 export function ResponseView(props: IReadingResponseViewerProps): React.ReactElement {
@@ -23,6 +25,20 @@ export function ResponseView(props: IReadingResponseViewerProps): React.ReactEle
 
         return MarkDown.render(props.response.text);
     }, [props.response]);
+
+    if (props.parseError) {
+        return <MessageBar
+            messageBarType={MessageBarType.error}
+            isMultiline={true}
+            onDismiss={props.closeParseError}
+            dismissButtonAriaLabel="Close"
+        >
+            <strong>An error ocurred parsing the responses file.</strong>
+            <p>
+                {props.parseError}
+            </p>
+        </MessageBar>
+    }
 
     if (!props.response) {
         return <></>;

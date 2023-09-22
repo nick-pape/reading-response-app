@@ -9,6 +9,7 @@ export interface IUseCommandBarActionsProps {
     setResponses: (responses: ReadingResponses | undefined) => void;
     setGradebookData: (gradebook: Gradebook | undefined) => void;
     setIsReviewMode: (isReviewMode: boolean) => void;
+    setParseError: (parseError: string | undefined) => void;
     selection: Selection;
 }
 
@@ -18,12 +19,13 @@ export function useCommandBarActions(props: IUseCommandBarActionsProps): {
     onBackClicked: () => void,
     onReviewMode: () => void
 } {
-    const { setResponses, setGradebookData, setIsReviewMode, selection } = props;
+    const { setResponses, setGradebookData, setIsReviewMode, setParseError, selection } = props;
 
     const onLoadFile = React.useCallback(() => {
         Electron.openFile().then((data) => {
             setResponses(data.responses);
-            setGradebookData(data.grades)
+            setGradebookData(data.grades);
+            setParseError(data.parseError);
         }).catch(() => { })
     }, [setResponses, setGradebookData]);
 
