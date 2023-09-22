@@ -1,7 +1,10 @@
-name: Build
+name: CI Build
 
 on:
   pull_request:
+    branches:
+      - '*'
+  push:
     branches:
       - '*'
 

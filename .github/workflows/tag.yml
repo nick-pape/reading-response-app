@@ -1,4 +1,4 @@
-name: Version Bump & Release Tag
+name: Release
 
 permissions:
   contents: write
@@ -13,7 +13,13 @@ on:
 
 jobs:
   bump-version:
-    runs-on: ubuntu-latest
+    name: Release on node ${{ matrix.node_version }} and ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        node-version: [18.x]
+        os: [windows-latest]
 
     steps:
       - name: Checkout code
@@ -39,6 +45,21 @@ jobs:
           new_version=$(npx semver -i $bump_type $current_version)
           echo "::set-output name=new_version::$new_version"
           npm version --no-git-tag-version $new_version
+
+      - name: Build
+        run: |
+          npm run build
+
+      - name: Package
+        run: |
+          npm run package
+          npm run make
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            out/make/squirrel.windows/x64/*.exe
 
       - name: Commit version bump
         run: |
