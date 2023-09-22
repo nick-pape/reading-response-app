@@ -55,13 +55,14 @@ export function ResponseView(props: IReadingResponseViewerProps): React.ReactEle
         >
             {props.response.username}
         </Text>
-        <span
+        <Text
             style={{
                 position: 'relative',
                 top: '0',
                 bottom: '0'
             }}
-            dangerouslySetInnerHTML={{ __html: markdown }}
-        />
+            >
+            <span dangerouslySetInnerHTML={{ __html: markdown }} />
+        </Text>
     </>;
 }
