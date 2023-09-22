@@ -50,7 +50,7 @@ export function useMergedListItems(props: IUseGroupingsProps): {
             list.sort((a, b) => {
                 // Check for undefined grades
                 if (a.grade === undefined && b.grade === undefined) {
-                    return a.username > b.username ? 1 : -1;
+                    return a.username.toLowerCase() > b.username.toLowerCase() ? 1 : -1;
                 } else if (a.grade === undefined) {
                     return -1;
                 } else if (b.grade === undefined) {
@@ -58,7 +58,7 @@ export function useMergedListItems(props: IUseGroupingsProps): {
                 } else {
                     // Compare numeric grades
                     if (a.grade === b.grade) {
-                        return a.username > b.username ? 1 : -1;
+                        return a.username.toLowerCase() > b.username.toLowerCase() ? 1 : -1;
                     }
                     return a.grade - b.grade;
                 }
