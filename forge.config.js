@@ -1,7 +1,21 @@
 module.exports = {
   packagerConfig: {
     asar: true,
-    icon: 'assets/robot'
+    icon: 'assets/robot',
+    ignore: [
+      /node_modules\/(?!tslib)/,
+      /lib(?!-commonjs)\/app/,
+      /lib(?!-commonjs)\/harness/,
+      /\.github/,
+      /src/,
+      /temp/,
+      /\.eslintrc\.js/,
+      /\.gitignore/,
+      /forge\.config\.js/,
+      /package-lock\.json/,
+      /tsconfig\.json/,
+      /webpack\.config\.js/
+    ]
   },
 
   make_targets: {
