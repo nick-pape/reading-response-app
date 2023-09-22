@@ -1,6 +1,6 @@
 {
   "name": "grading-utility",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Grading utility for RL reading responses",
   "main": "lib-commonjs/harness/main.js",
   "scripts": {
