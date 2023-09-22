@@ -46,6 +46,7 @@ jobs:
           git config --local user.name "GitHub Action"
           git add package.json package-lock.json
           git commit -m "Bump version to ${{ steps.bump-version.outputs.new_version }}"
+          git push
 
       - name: Create and push tag
         run: |
