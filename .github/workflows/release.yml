@@ -1,10 +1,10 @@
-name: Build
+name: Release
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ ]
 
 jobs:
   build:
@@ -14,7 +14,7 @@ jobs:
     strategy:
       matrix:
         node-version: [18.x]
-        os: [ubuntu-latest, windows-latest, macOS-latest]
+        os: [ubuntu-latest]
 
     steps:
     - uses: actions/checkout@v3
@@ -28,3 +28,14 @@ jobs:
       run: |
         npm install
         npm run build
+
+    - name: Package
+      run: |
+        npm run package
+        npm run make
+
+    - name: Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          out/make/squirrel.windows/x64/*.exe
