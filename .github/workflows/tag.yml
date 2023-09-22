@@ -62,6 +62,7 @@ jobs:
   release:
     name: Release on node ${{ matrix.node_version }} and ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
+    needs: bump-version
 
     strategy:
       matrix:
