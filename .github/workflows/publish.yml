@@ -139,14 +139,18 @@ jobs:
       - package-linux
 
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js 18.x
+        uses: actions/setup-node@v2
+        with:
+          node-version: 18.x
+
       - name: Download Artifacts
         uses: actions/download-artifact@v3
         with:
           path: ./out/make
-
-      - name: List Artifacts
-        run: |
-          find ./out/make
 
       - name: Get current version
         id: get-version
@@ -157,6 +161,8 @@ jobs:
         with:
           tag_name: v${{ steps.get-version.outputs.current_version }}
           files: |
-            out/make/squirrel.windows/x64/*.exe
-            out/make/zip/darwin/x64/*.zip
-            out/make/zip/darwin/x64/*.dmg
+            out/make/artifact/rpm/x64/*.rpm
+            out/make/artifact/*.dmg
+            out/make/artifact/zip/darwin/x64/*.zip
+            out/make/artifact/deb/x64/*.deb
+            /out/make/artifact/squirrel.windows/x64/*.exe
