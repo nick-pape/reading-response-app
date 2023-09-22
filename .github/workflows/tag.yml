@@ -90,9 +90,14 @@ jobs:
           npm run package
           npm run make
 
+      - name: Get current version
+        id: get-version
+        run: echo "::set-output name=current_version::$(node -p "require('./package.json').version")"
+
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
+          tag_name: v${{ steps.get-version.outputs.current_version }}
           files: |
             out/make/squirrel.windows/x64/*.exe
 
