@@ -13,22 +13,22 @@ on:
 
 jobs:
   bump-version:
-    name: Release on node ${{ matrix.node_version }} and ${{ matrix.os }}
+    name: Bump Versions
     runs-on: ${{ matrix.os }}
 
     strategy:
       matrix:
         node-version: [18.x]
-        os: [windows-latest]
+        os: [ubuntu-latest]
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set up Node.js
+      - name: Set up Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v2
         with:
-          node-version: 18.x # Use the Node.js version you prefer
+          node-version: ${{ matrix.node-version }}
 
       - name: Install dependencies
         run: npm install
@@ -46,6 +46,40 @@ jobs:
           echo "::set-output name=new_version::$new_version"
           npm version --no-git-tag-version $new_version
 
+      - name: Commit version bump
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add package.json package-lock.json
+          git commit -m "Bump version to ${{ steps.bump-version.outputs.new_version }}"
+          git push
+
+      - name: Create and push tag
+        run: |
+          git tag "v${{ steps.bump-version.outputs.new_version }}"
+          git push origin "v${{ steps.bump-version.outputs.new_version }}"
+
+  release:
+    name: Release on node ${{ matrix.node_version }} and ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        node-version: [18.x]
+        os: [windows-latest]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install dependencies
+        run: npm install
+
       - name: Build
         run: |
           npm run build
@@ -61,15 +95,4 @@ jobs:
           files: |
             out/make/squirrel.windows/x64/*.exe
 
-      - name: Commit version bump
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add package.json package-lock.json
-          git commit -m "Bump version to ${{ steps.bump-version.outputs.new_version }}"
-          git push
 
-      - name: Create and push tag
-        run: |
-          git tag "v${{ steps.bump-version.outputs.new_version }}"
-          git push origin "v${{ steps.bump-version.outputs.new_version }}"
