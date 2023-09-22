@@ -3,6 +3,12 @@ module.exports = {
     asar: true,
     icon: 'assets/robot'
   },
+
+  make_targets: {
+    win32: ['squirrel'],
+    darwin: ['zip'],
+    linux: ['deb', 'rpm']
+  },
   
   rebuildConfig: {},
   makers: [
