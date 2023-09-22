@@ -19,7 +19,7 @@ jobs:
     strategy:
       matrix:
         node-version: [18.x]
-        os: [ubuntu-latest]
+        os: [macOS-latest]
 
     steps:
       - name: Checkout code
@@ -59,28 +59,6 @@ jobs:
           git tag "v${{ steps.bump-version.outputs.new_version }}"
           git push origin "v${{ steps.bump-version.outputs.new_version }}"
 
-  release:
-    name: Release on node ${{ matrix.node_version }} and ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    needs: bump-version
-
-    strategy:
-      matrix:
-        node-version: [18.x]
-        os: [windows-latest]
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v2
-        with:
-          node-version: ${{ matrix.node-version }}
-
-      - name: Install dependencies
-        run: npm install
-
       - name: Build
         run: |
           npm run build
@@ -90,9 +68,9 @@ jobs:
           npm run package
           npm run make
 
-      - name: Get current version
-        id: get-version
-        run: echo "::set-output name=current_version::$(node -p "require('./package.json').version")"
+      - name: List build outputs
+        run: |
+          find out/make
 
       - name: Release
         uses: softprops/action-gh-release@v1
@@ -100,5 +78,6 @@ jobs:
           tag_name: v${{ steps.get-version.outputs.current_version }}
           files: |
             out/make/squirrel.windows/x64/*.exe
+
 
 
