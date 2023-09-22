@@ -19,7 +19,7 @@ module.exports = {
   },
 
   make_targets: {
-    win32: ['squirrel'],
+    win32: ['squirrel', 'zip'],
     darwin: ['zip', 'dmg'],
     linux: ['deb', 'rpm']
   },
@@ -32,7 +32,7 @@ module.exports = {
     },
     {
       name: '@electron-forge/maker-zip',
-      platforms: ['darwin'],
+      config: {},
     },
     {
       name: '@electron-forge/maker-deb',

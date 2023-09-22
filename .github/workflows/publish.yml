@@ -174,3 +174,4 @@ jobs:
             out/make/artifact/zip/darwin/x64/*.zip
             out/make/artifact/deb/x64/*.deb
             out/make/artifact/squirrel.windows/x64/*.exe
+            out/make/artifact/zip/win32/x64/*.zip
