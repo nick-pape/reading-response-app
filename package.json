@@ -13,7 +13,7 @@
   "license": "ISC",
   "dependencies": {
     "electron-squirrel-startup": "^1.0.0",
-    "katex": "^0.16.8",
+    "katex": "^0.16.21",
     "markdown-it": "^13.0.1",
     "markdown-it-katex": "^2.0.3",
     "react": "~16.13.1",
@@ -30,11 +30,11 @@
     "@electron-forge/plugin-auto-unpack-natives": "^6.4.2",
     "@fluentui/react": "^8.111.2",
     "@rushstack/eslint-config": "^3.3.4",
-    "@rushstack/heft": "^0.60.0",
-    "@rushstack/heft-jest-plugin": "^0.9.1",
-    "@rushstack/heft-lint-plugin": "^0.2.1",
-    "@rushstack/heft-typescript-plugin": "^0.2.1",
-    "@rushstack/heft-webpack5-plugin": "^0.9.1",
+    "@rushstack/heft": "^1.0.0",
+    "@rushstack/heft-jest-plugin": "^1.0.0",
+    "@rushstack/heft-lint-plugin": "^1.0.0",
+    "@rushstack/heft-typescript-plugin": "^1.0.0",
+    "@rushstack/heft-webpack5-plugin": "^1.0.0",
     "@types/heft-jest": "^1.0.4",
     "@types/markdown-it": "^13.0.1",
     "@types/node": "14.18.36",
@@ -42,12 +42,12 @@
     "@types/react-dom": "16.9.14",
     "@types/webpack-env": "1.18.0",
     "css-loader": "~6.6.0",
-    "electron": "^26.2.1",
+    "electron": "^35.7.5",
     "eslint": "~8.7.0",
     "html-webpack-plugin": "~5.5.0",
     "source-map-loader": "~3.0.1",
     "style-loader": "~3.3.1",
     "typescript": "~5.0.4",
-    "webpack": "~5.82.1"
+    "webpack": "~5.94.0"
   }
 }
